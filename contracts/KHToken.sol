@@ -24,9 +24,9 @@ library MUI256 {
 
 contract ERC20Base {  
     // region{fields}
-    string public name;                  
-    uint8 public decimals;                
-    string public symbol;                 
+    string public name;                         
+    string public symbol;            
+    uint8 public decimals;              
     uint256 public totalSupply; 
  
     // region{call}
@@ -46,7 +46,7 @@ contract ERC20Base {
 contract KHToken is ERC20Base {
     using MUI256 for uint256; 
 
-    uint256 claimAmount;
+    uint256 public claimAmount;
 
     mapping (address => uint256) public balances;
     mapping (address => mapping (address => uint256)) public allowed; 
