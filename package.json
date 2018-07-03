@@ -6,5 +6,12 @@
   "repository": "https://github.com/bagaking/KHToken.git",
   "author": "kinghand",
   "license": "MIT",
-  "keywords": [ "eth", "ERC20" ]
+  "keywords": [
+    "eth",
+    "ERC20"
+  ],
+  "dependencies": {
+    "truffle": "4.1.13",
+    "truffle-hdwallet-provider": "0.0.5"
+  }
 }
