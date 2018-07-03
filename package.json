@@ -1,0 +1,10 @@
+{
+  "name": "KHToken",
+  "version": "1.0.0",
+  "description": "ETH ERC20 standard contracts",
+  "main": "main.js",
+  "repository": "https://github.com/bagaking/KHToken.git",
+  "author": "kinghand",
+  "license": "MIT",
+  "keywords": [ "eth", "ERC20" ]
+}
