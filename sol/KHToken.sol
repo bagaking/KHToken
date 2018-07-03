@@ -1,80 +1,106 @@
 pragma solidity ^0.4.23; 
 
-contract ERC20Base {  
-    string public name;                  
-    uint8 public decimals;                
-    string public symbol;                 
-    uint256 public totalSupply; 
- 
-    function balanceOf(address _owner) public view returns (uint256 balance); 
-    function transfer(address _to, uint256 _value) public returns (bool success); 
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success); 
-    function approve(address _spender, uint256 _value) public returns (bool success); 
-    function allowance(address _owner, address _spender) public view returns (uint256 remaining); 
-    event Transfer(address indexed _from, address indexed _to, uint256 _value);
-    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
-}
+library MUI256 {  
+    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+        if (a == 0) {
+            return 0;
+        }
+        uint256 c = a * b;
+        assert(c / a == b);
+        return c;
+    }
 
-library SafeAddSub { 
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(a >= b); 
+        assert(a >= b); 
         return a - b;
     }
 
     function add(uint256 a, uint256 b) internal pure returns (uint256) {
         uint256 c = a + b;
-        require(c >= a); //exceeded
+        assert(c >= a);
         return c;
     }
-}  
+} 
+
+contract ERC20Base {  
+    // region{fields}
+    string public name;                  
+    uint8 public decimals;                
+    string public symbol;                 
+    uint256 public totalSupply; 
+ 
+    // region{call}
+    function balanceOf(address _owner) public view returns (uint256 balance); 
+    function allowance(address _owner, address _spender) public view returns (uint256 remaining); 
+
+    // region{transfer}
+    function transfer(address _to, uint256 _value) public returns (bool success); 
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success); 
+    function approve(address _spender, uint256 _value) public returns (bool success); 
+    
+    // region{events}
+    event Transfer(address indexed _from, address indexed _to, uint256 _value);
+    event Approval(address indexed _owner, address indexed _spender, uint256 _value);
+} 
 
 contract KHToken is ERC20Base {
-    using SafeAddSub for uint256; 
+    using MUI256 for uint256; 
+
+    uint256 claimAmount;
 
     mapping (address => uint256) public balances;
     mapping (address => mapping (address => uint256)) public allowed; 
 
-    constructor(
-            uint256 _init_amount,
-            string _token_name,
-            uint8 _decimal,
-            string _symbol
-    ) public {
-        balances[msg.sender] = _init_amount;               
-        totalSupply = _init_amount;                        
-        name = _token_name;                                
-        decimals = _decimal;                            
-        symbol = _symbol;                               
-    }
-
-
-    function transfer(address _to, uint256 _value) public returns (bool success) {  
-        balances[msg.sender] = balances[msg.sender].sub(_value);
+    // ===== private methods =====
+    function _trans(address _from, address _to, uint256 _value) internal {
+        require(_to != 0x0);
+        uint256 _previous_total = balances[_from] + balances[_to];
+        balances[_from] = balances[_from].sub(_value);
         balances[_to] = balances[_to].add(_value);
-        emit Transfer(msg.sender, _to, _value); 
-        return true;
+        emit Transfer(_from, _to, _value); 
+        assert(balances[_from] + balances[_to] == _previous_total);
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) { 
-        allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
-        balances[_from] = balances[_from].sub(_value); 
-        balances[_to] = balances[_to].add(_value);
-        emit Transfer(_from, _to, _value);
-        return true;
+    // region{Constructor}
+
+    // note : [(final)totalSupply] >> claimAmount * 10 ** decimals
+    // example : args << "The Kh Token No.X", "KHTX", "10000000000", "18"
+    constructor(string _token_name, string _symbol, uint256 _claim_amount, uint8 _decimals) public {
+        name = _token_name;                              
+        symbol = _symbol;     
+        claimAmount = _claim_amount;                                     
+        decimals = _decimals;
+        totalSupply = claimAmount.mul(10 ** uint256(decimals)); 
+        balances[msg.sender] = totalSupply;   
+        emit Transfer(0x0, msg.sender, totalSupply); 
     }
+
+    // region{call}
 
     function balanceOf(address _owner) public view returns (uint256 balance) {
         return balances[_owner];
     }
 
+    function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
+        return allowed[_owner][_spender];
+    }
+
+    // region{transfer}
+
+    function transfer(address _to, uint256 _value) public returns (bool success) {  
+        _trans(msg.sender, _to, _value);
+        return true;
+    }
+
+    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) { 
+        allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value); 
+        _trans(_from, _to, _value);
+        return true;
+    } 
+
     function approve(address _spender, uint256 _value) public returns (bool success) {
         allowed[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value); 
         return true;
-    }
-
-    function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
-        return allowed[_owner][_spender];
-    }
+    } 
 }
-//"21000000000000000000000000","KHTOKEN1","18","KHT1"
