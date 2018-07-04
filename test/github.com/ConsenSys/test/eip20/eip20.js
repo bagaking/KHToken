@@ -8,12 +8,12 @@ contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | c
     KHT = await EIP20Abstraction.new('KH Token No.X', 'TAT', 1000, 1, { from: accounts[0] });
   });
  
-  it('creation: should create an initial balance of 10000 (kh: with decimals == 1) for the creator', async () => {
+  it('creation: 1: should create an initial balance of 10000 (kh: with decimals == 1) for the creator', async () => {
     const balance = await KHT.balanceOf.call(accounts[0]);
     assert.strictEqual(balance.toNumber(), 10000);
   });
 
-  it('creation: test correct setting of vanity information', async () => {
+  it('creation: 2: test correct setting of vanity information', async () => {
     const name = await KHT.name.call();
     assert.strictEqual(name, 'KH Token No.X');
 
@@ -32,7 +32,7 @@ contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | c
     // kh.end
   });
 
-  it('creation: should succeed in creating over 2^256 - 1 (max) tokens', async () => {
+  it('creation: 3: should succeed in creating over 2^256 - 1 (max) tokens', async () => {
     // 2^256 - 1
     /* const KHT2 = await EIP20Abstraction.new('KH Token No.X', 'TAT','115792089237316195423570985008687907853269984665640564039457584007913129639935', 1,  { from: accounts[0] }); */
     // kh.
@@ -45,7 +45,7 @@ contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | c
 
   // TRANSERS
   // normal transfers without approvals
-  it('transfers: ether transfer should be reversed.', async () => {
+  it('transfers: 1: ether transfer should be reversed.', async () => {
     const balanceBefore = await KHT.balanceOf.call(accounts[0]);
     assert.strictEqual(balanceBefore.toNumber(), 10000);
 
@@ -60,17 +60,17 @@ contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | c
     assert.strictEqual(balanceAfter.toNumber(), 10000);
   });
 
-  it('transfers: should transfer 10000 to accounts[1] with accounts[0] having 10000', async () => {
+  it('transfers: 2: should transfer 10000 to accounts[1] with accounts[0] having 10000', async () => {
     await KHT.transfer(accounts[1], 10000, { from: accounts[0] });
     const balance = await KHT.balanceOf.call(accounts[1]);
     assert.strictEqual(balance.toNumber(), 10000);
   });
 
-  it('transfers: should fail when trying to transfer 10001 to accounts[1] with accounts[0] having 10000', async () => {
+  it('transfers: 3: should fail when trying to transfer 10001 to accounts[1] with accounts[0] having 10000', async () => {
     await assertRevert(KHT.transfer.call(accounts[1], 10001, { from: accounts[0] }));
   });
 
-  it('transfers: should handle zero-transfers normally', async () => {
+  it('transfers: 4: should handle zero-transfers normally', async () => {
     assert(await KHT.transfer.call(accounts[1], 0, { from: accounts[0] }), 'zero-transfer has failed');
   });
 
@@ -78,14 +78,14 @@ contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | c
   // todo: transfer max amounts
 
   // APPROVALS
-  it('approvals: msg.sender should approve 100 to accounts[1]', async () => {
+  it('approvals: 1: msg.sender should approve 100 to accounts[1]', async () => {
     await KHT.approve(accounts[1], 100, { from: accounts[0] });
     const allowance = await KHT.allowance.call(accounts[0], accounts[1]);
     assert.strictEqual(allowance.toNumber(), 100);
   });
 
   // bit overkill. But is for testing a bug
-  it('approvals: msg.sender approves accounts[1] of 100 & withdraws 20 once.', async () => {
+  it('approvals: 2: msg.sender approves accounts[1] of 100 & withdraws 20 once.', async () => {
     const balance0 = await KHT.balanceOf.call(accounts[0]);
     assert.strictEqual(balance0.toNumber(), 10000);
 
@@ -107,7 +107,7 @@ contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | c
   });
 
   // should approve 100 of msg.sender & withdraw 50, twice. (should succeed)
-  it('approvals: msg.sender approves accounts[1] of 100 & withdraws 20 twice.', async () => {
+  it('approvals: 3: msg.sender approves accounts[1] of 100 & withdraws 20 twice.', async () => {
     await KHT.approve(accounts[1], 100, { from: accounts[0] });
     const allowance01 = await KHT.allowance.call(accounts[0], accounts[1]);
     assert.strictEqual(allowance01.toNumber(), 100);
@@ -136,7 +136,7 @@ contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | c
   });
 
   // should approve 100 of msg.sender & withdraw 50 & 60 (should fail).
-  it('approvals: msg.sender approves accounts[1] of 100 & withdraws 50 & 60 (2nd tx should fail)', async () => {
+  it('approvals: 4: msg.sender approves accounts[1] of 100 & withdraws 50 & 60 (2nd tx should fail)', async () => {
     await KHT.approve(accounts[1], 100, { from: accounts[0] });
     const allowance01 = await KHT.allowance.call(accounts[0], accounts[1]);
     assert.strictEqual(allowance01.toNumber(), 100);
@@ -156,25 +156,25 @@ contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | c
     await assertRevert(KHT.transferFrom.call(accounts[0], accounts[2], 60, { from: accounts[1] }));
   });
 
-  it('approvals: attempt withdrawal from account with no allowance (should fail)', async () => {
+  it('approvals: 5: attempt withdrawal from account with no allowance (should fail)', async () => {
     await assertRevert(KHT.transferFrom.call(accounts[0], accounts[2], 60, { from: accounts[1] }));
   });
 
-  it('approvals: allow accounts[1] 100 to withdraw from accounts[0]. Withdraw 60 and then approve 0 & attempt transfer.', async () => {
+  it('approvals: 6: allow accounts[1] 100 to withdraw from accounts[0]. Withdraw 60 and then approve 0 & attempt transfer.', async () => {
     await KHT.approve(accounts[1], 100, { from: accounts[0] });
     await KHT.transferFrom(accounts[0], accounts[2], 60, { from: accounts[1] });
     await KHT.approve(accounts[1], 0, { from: accounts[0] });
     await assertRevert(KHT.transferFrom.call(accounts[0], accounts[2], 10, { from: accounts[1] }));
   });
 
-  it('approvals: approve max (2^256 - 1)', async () => {
+  it('approvals: 7: approve max (2^256 - 1)', async () => {
     await KHT.approve(accounts[1], '115792089237316195423570985008687907853269984665640564039457584007913129639935', { from: accounts[0] });
     const allowance = await KHT.allowance(accounts[0], accounts[1]);
     assert(allowance.equals('1.15792089237316195423570985008687907853269984665640564039457584007913129639935e+77'));
   });
 
   // should approve max of msg.sender & withdraw 20 without changing allowance (should succeed).
-  it('approvals: msg.sender approves accounts[1] of max (2^256 - 1) & withdraws 20', async () => {
+  it('approvals: 8: msg.sender approves accounts[1] of max (2^256 - 1) & withdraws 20', async () => {
     const balance0 = await KHT.balanceOf.call(accounts[0]);
     assert.strictEqual(balance0.toNumber(), 10000);
 
@@ -195,7 +195,7 @@ contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | c
   });
 
   /* eslint-disable no-underscore-dangle */
-  it('events: should fire Transfer event properly', async () => {
+  it('events: 1: should fire Transfer event properly', async () => {
     const res = await KHT.transfer(accounts[1], '2666', { from: accounts[0] });
     const transferLog = res.logs.find(element => element.event.match('Transfer'));
     assert.strictEqual(transferLog.args._from, accounts[0]);
@@ -203,7 +203,7 @@ contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | c
     assert.strictEqual(transferLog.args._value.toString(), '2666');
   });
 
-  it('events: should fire Transfer event normally on a zero transfer', async () => {
+  it('events: 2: should fire Transfer event normally on a zero transfer', async () => {
     const res = await KHT.transfer(accounts[1], '0', { from: accounts[0] });
     const transferLog = res.logs.find(element => element.event.match('Transfer'));
     assert.strictEqual(transferLog.args._from, accounts[0]);
@@ -211,7 +211,7 @@ contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | c
     assert.strictEqual(transferLog.args._value.toString(), '0');
   });
 
-  it('events: should fire Approval event properly', async () => {
+  it('events: 3: should fire Approval event properly', async () => {
     const res = await KHT.approve(accounts[1], '2666', { from: accounts[0] });
     const approvalLog = res.logs.find(element => element.event.match('Approval'));
     assert.strictEqual(approvalLog.args._owner, accounts[0]);

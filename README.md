@@ -5,8 +5,8 @@
 2. update npm to latest
 3. install yarn
 4. clone the repo
-5. ```cd ./KHToken```
+5. ```cd ./KHToken``` 
 
 ## Test :
-```yarn install```
-```npm run test```
+1. ```yarn install```  
+2. ```npm run test```  
