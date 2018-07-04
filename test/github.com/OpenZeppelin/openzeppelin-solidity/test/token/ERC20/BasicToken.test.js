@@ -4,7 +4,10 @@ const { assertRevert } = require('../../helpers/assertRevert');
 // kh. openzeppelin-solidity/contracts/mocks/BasicTokenMock.sol : openzeppelin-solidity/contracts/token/ERC20/BasicToken.sol
 const KHToken = artifacts.require('KHToken');
 
-contract('StandardToken', function ([_, owner, recipient, anotherAccount]) {
+contract(
+  'KHToken test from https://github.com/OpenZeppelin/openzeppelin-solidity/test/token/ERC20/ | master | commit 8fd072cf8e48198e3310193cc0ba21610250caf6', 
+  function ([_, owner, recipient, anotherAccount]) {
+    
   const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
   beforeEach(async function () {
@@ -67,9 +70,33 @@ contract('StandardToken', function ([_, owner, recipient, anotherAccount]) {
 
           assert.equal(logs.length, 1);
           assert.equal(logs[0].event, 'Transfer');
-          assert.equal(logs[0].args.from, owner);
-          assert.equal(logs[0].args.to, to);
-          assert(logs[0].args.value.eq(amount));
+          // kh. # format
+          //assert.equal(logs[0].args.from, owner);
+          //assert.equal(logs[0].args.to, to);
+          //assert(logs[0].args.value.eq(amount));
+          assert.equal(logs[0].args._from, owner);
+          assert.equal(logs[0].args._to, to);
+          assert(logs[0].args._value.eq(amount)); 
+          /* reference 
+            [ 
+              { 
+                logIndex: 0,
+                transactionIndex: 0,
+                transactionHash: '0xa1cb046876505d9590f4c7626d1bc8afa82ea94c0c14637c056b4ad905754d99',
+                blockHash: '0x48804be91a25c42008ad918e71cceb8e98aa8227b3bc4edafd000c58527e23f8',
+                blockNumber: 13,
+                address: '0x7105a11e8487bfaf8c02aa6a7cda5283f971107c',
+                type: 'mined',
+                event: 'Transfer',
+                args:
+                { _from: '0xf17f52151ebef6c7334fad080c5704d77216b732',
+                  _to: '0xc5fdf4076b8f3a5357c5e395ab970b5b54098fef',
+                  _value: [Object] 
+                } 
+              } 
+            ]
+          */
+          // kh.done 
         });
       });
     });
