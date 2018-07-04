@@ -5,8 +5,9 @@ const { assertRevert } = require('../../helpers/assertRevert');
 const KHToken = artifacts.require('KHToken');
 
 contract(
-  'KHToken test from https://github.com/OpenZeppelin/openzeppelin-solidity/test/token/ERC20/ | master | commit 8fd072cf8e48198e3310193cc0ba21610250caf6', 
-  function ([_, owner, recipient, anotherAccount]) {
+  'BasicToken : KHToken test from https://github.com/OpenZeppelin/openzeppelin-solidity/test/token/ERC20/ | master | commit 8fd072cf8e48198e3310193cc0ba21610250caf6', 
+  function ([_, owner, recipient, anotherAccount]
+) {
     
   const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
