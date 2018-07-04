@@ -50,22 +50,17 @@ contract KHToken is ERC20Base {
 
     mapping (address => uint256) public balances;
     mapping (address => mapping (address => uint256)) public allowed; 
-
-    // ===== private methods =====
-    function _trans(address _from, address _to, uint256 _value) internal {
-        require(_to != 0x0);
-        uint256 _previous_total = balances[_from] + balances[_to];
-        balances[_from] = balances[_from].sub(_value);
-        balances[_to] = balances[_to].add(_value);
-        emit Transfer(_from, _to, _value); 
-        assert(balances[_from] + balances[_to] == _previous_total);
-    }
-
+ 
     // region{Constructor}
 
     // note : [(final)totalSupply] >> claimAmount * 10 ** decimals
     // example : args << "The Kh Token No.X", "KHTX", "10000000000", "18"
-    constructor(string _token_name, string _symbol, uint256 _claim_amount, uint8 _decimals) public {
+    constructor(
+        string _token_name, 
+        string _symbol, 
+        uint256 _claim_amount, 
+        uint8 _decimals
+    ) public {
         name = _token_name;                              
         symbol = _symbol;     
         claimAmount = _claim_amount;                                     
@@ -77,30 +72,59 @@ contract KHToken is ERC20Base {
 
     // region{call}
 
-    function balanceOf(address _owner) public view returns (uint256 balance) {
+    function balanceOf(
+        address _owner
+    ) public view returns (uint256 balance) {
         return balances[_owner];
     }
 
-    function allowance(address _owner, address _spender) public view returns (uint256 remaining) {
+    function allowance(
+        address _owner, 
+        address _spender
+    ) public view returns (uint256 remaining) {
         return allowed[_owner][_spender];
     }
 
     // region{transfer}
 
-    function transfer(address _to, uint256 _value) public returns (bool success) {  
+    function transfer(
+        address _to, 
+        uint256 _value
+    ) public returns (bool success) {  
         _trans(msg.sender, _to, _value);
         return true;
     }
 
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) { 
+    function transferFrom(
+        address _from, 
+        address _to, 
+        uint256 _value
+    ) public returns (bool success) { 
+        require(_value <= allowed[_from][msg.sender]); 
         allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value); 
         _trans(_from, _to, _value);
         return true;
     } 
 
-    function approve(address _spender, uint256 _value) public returns (bool success) {
+    function approve(
+        address _spender, 
+        uint256 _value
+    ) public returns (bool success) {
         allowed[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value); 
         return true;
     } 
+
+     // ===== private methods =====
+    function _trans(address _from, address _to, uint256 _value) internal {
+        require(_to != address(0));
+        require(balances[_from] >= _value); 
+        require(balances[_to] + _value >= balances[_to]);
+
+        uint256 _previous_total = balances[_from] + balances[_to];
+        balances[_from] = balances[_from].sub(_value);
+        balances[_to] = balances[_to].add(_value);
+        emit Transfer(_from, _to, _value); 
+        assert(balances[_from] + balances[_to] == _previous_total);
+    }
 }
