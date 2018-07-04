@@ -103,6 +103,8 @@ contract KHToken_EIP20 is EIP20Interface {
     }
 
     function approve(address _spender, uint256 _value) public returns (bool success) {
+        // race condition see : https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
+        require((_value == 0) || (allowed[msg.sender][_spender] == 0), "reset allowance to 0 before change it's value.");
         allowed[msg.sender][_spender] = _value;
         emit Approval(msg.sender, _spender, _value); //solhint-disable-line indent, no-unused-vars
         return true;
