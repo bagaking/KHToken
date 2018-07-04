@@ -70,7 +70,7 @@ contract KHToken_EIP20 is EIP20Interface {
         uint256 _initialAmount,
         uint8 _decimalUnits
     ) public {
-        uint256 _supply = _initialAmount * 10 ** _decimalUnits;
+        uint256 _supply = _initialAmount * 10 ** uint256(_decimalUnits);
         balances[msg.sender] = _supply;               // Give the creator all initial tokens
         totalSupply = _supply;                        // Update total supply
         name = _tokenName;                                   // Set the name for display purposes
