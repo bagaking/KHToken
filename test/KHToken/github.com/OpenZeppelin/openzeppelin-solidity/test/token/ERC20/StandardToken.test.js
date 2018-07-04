@@ -117,12 +117,17 @@ contract(
             await this.token.approve(spender, 1, { from: owner });
           });
 
-          it('approves the requested amount and replaces the previous one', async function () {
-            await this.token.approve(spender, amount, { from: owner });
+          it('reverts : approves the requested amount and replaces the previous one', async function () {
+            await assertRevert(this.token.approve(spender, amount, { from: owner })); 
+          });
 
+          it('approves 0, then approves the requested amount and replaces the previous one', async function () {
+            await this.token.approve(spender, 0, { from: owner });
+            await this.token.approve(spender, amount, { from: owner });
             const allowance = await this.token.allowance(owner, spender);
             assert.equal(allowance, amount);
-          });
+          }); 
+          
         });
       });
 
@@ -154,12 +159,18 @@ contract(
             await this.token.approve(spender, 1, { from: owner });
           });
 
-          it('approves the requested amount and replaces the previous one', async function () {
-            await this.token.approve(spender, amount, { from: owner });
+          it('reverts : approves the requested amount and replaces the previous one', async function () {
+            await assertRevert(this.token.approve(spender, amount, { from: owner })); 
+          });
 
+          it('approves 0, then approves the requested amount and replaces the previous one', async function () {
+            await this.token.approve(spender, 0, { from: owner });
+            await this.token.approve(spender, amount, { from: owner });
             const allowance = await this.token.allowance(owner, spender);
             assert.equal(allowance, amount);
           });
+
+          
         });
       });
     });
