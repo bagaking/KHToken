@@ -1,12 +1,12 @@
 const { assertRevert } = require('../helpers/assertRevert');
-const EIP20Abstraction = artifacts.require('KHToken');
+const KHToken = artifacts.require('KHToken');
 
 let KHT;
 const MAX_VALUE = 2 ** 256 - 1;
 
 contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | commit 812791dfbf3c9a9f5e8370e26cda0009bde43f03', (accounts) => {
   beforeEach(async () => {
-    KHT = await EIP20Abstraction.new('KH Token No.X', 'TAT', 1000, 1, { from: accounts[0] });
+    KHT = await KHToken.new('KH Token No.X', 'TAT', 1000, 1, { from: accounts[0] });
   });
  
   //kh.
@@ -41,9 +41,9 @@ contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | c
 
   it('creation: 3: should succeed in creating over 2^256 - 1 (max) tokens', async () => {
     // 2^256 - 1
-    /* const KHT2 = await EIP20Abstraction.new('KH Token No.X', 'TAT','115792089237316195423570985008687907853269984665640564039457584007913129639935', 1,  { from: accounts[0] }); */
+    /* const KHT2 = await KHToken.new('KH Token No.X', 'TAT','115792089237316195423570985008687907853269984665640564039457584007913129639935', 1,  { from: accounts[0] }); */
     // kh.
-    const KHT2 = await EIP20Abstraction.new('KH Token No.X', 'TAT','115792089237316195423570985008687907853269984665640564039457584007913129639935', 0,  { from: accounts[0] });
+    const KHT2 = await KHToken.new('KH Token No.X', 'TAT','115792089237316195423570985008687907853269984665640564039457584007913129639935', 0,  { from: accounts[0] });
     // kh.end
     const totalSupply2 = await KHT2.totalSupply();
     const match2 = totalSupply2.equals('1.15792089237316195423570985008687907853269984665640564039457584007913129639935e+77');
