@@ -1,6 +1,10 @@
+[![Build Status](https://travis-ci.org/bagaking/KHToken.svg?branch=master)](https://travis-ci.org/bagaking/KHToken) 
+[![Npm version](https://img.shields.io/npm/v/khtoken.svg)](https://github.com/bagaking/KHToken)
+[![Lisence](https://img.shields.io/npm/l/khtoken.svg)](https://github.com/bagaking/KHToken/blob/master/LICENSE) 
+
 # KHToken
 
-## Prepare
+## Preparation
 
 #### enviroment:
 1. install node
