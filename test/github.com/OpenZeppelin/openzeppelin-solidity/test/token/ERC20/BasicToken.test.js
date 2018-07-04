@@ -1,4 +1,5 @@
-import assertRevert from '../../helpers/assertRevert';
+const { assertRevert } = require('../../helpers/assertRevert'); 
+
 // const BasicToken = artifacts.require('BasicTokenMock');
 // kh. openzeppelin-solidity/contracts/mocks/BasicTokenMock.sol : openzeppelin-solidity/contracts/token/ERC20/BasicToken.sol
 const KHToken = artifacts.require('KHToken');
