@@ -2,12 +2,19 @@ const { assertRevert } = require('../helpers/assertRevert');
 const EIP20Abstraction = artifacts.require('KHToken');
 
 let KHT;
+const MAX_VALUE = 2 ** 256 - 1;
 
 contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | commit 812791dfbf3c9a9f5e8370e26cda0009bde43f03', (accounts) => {
   beforeEach(async () => {
     KHT = await EIP20Abstraction.new('KH Token No.X', 'TAT', 1000, 1, { from: accounts[0] });
   });
  
+  //kh.
+  it('const: 1: MAX_VALUE should correst', async () => { 
+    assert.strictEqual(MAX_VALUE, 115792089237316195423570985008687907853269984665640564039457584007913129639935);
+  });
+  //kh.done
+
   it('creation: 1: should create an initial balance of 10000 (kh: with decimals == 1) for the creator', async () => {
     const balance = await KHT.balanceOf.call(accounts[0]);
     assert.strictEqual(balance.toNumber(), 10000);
@@ -185,7 +192,9 @@ contract('EIP20 test from https://github.com/ConsenSys/Tokens/test/ | master | c
 
     await KHT.transferFrom(accounts[0], accounts[2], 20, { from: accounts[1] });
     const allowance01 = await KHT.allowance.call(accounts[0], accounts[1]);
-    assert(allowance01.equals(max));
+    //kh. # contract difference
+    assert.strictEqual(allowance01.toNumber(), MAX_VALUE - 20);
+    //kg.done
 
     const balance22 = await KHT.balanceOf.call(accounts[2]);
     assert.strictEqual(balance22.toNumber(), 20);
