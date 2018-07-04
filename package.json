@@ -13,5 +13,10 @@
   "dependencies": {
     "truffle": "4.1.13",
     "truffle-hdwallet-provider": "0.0.5"
+  },
+  "scripts": {
+    "compile": "truffle compile",
+    "publish": "truffle publish", 
+    "test": "truffle test"
   }
 }
