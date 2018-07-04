@@ -68,9 +68,10 @@ contract(
 
           assert.equal(logs.length, 1);
           assert.equal(logs[0].event, 'Transfer');
-          assert.equal(logs[0].args.from, owner);
-          assert.equal(logs[0].args.to, to);
-          assert(logs[0].args.value.eq(amount));
+          // kh.
+          assert.equal(logs[0].args._from, owner);
+          assert.equal(logs[0].args._to, to);
+          assert(logs[0].args._value.eq(amount));
         });
       });
     });
@@ -96,9 +97,10 @@ contract(
 
           assert.equal(logs.length, 1);
           assert.equal(logs[0].event, 'Approval');
-          assert.equal(logs[0].args.owner, owner);
-          assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(amount));
+          // kh.
+          assert.equal(logs[0].args._owner, owner);
+          assert.equal(logs[0].args._spender, spender);
+          assert(logs[0].args._value.eq(amount));
         });
 
         describe('when there was no approved amount before', function () {
@@ -132,9 +134,10 @@ contract(
 
           assert.equal(logs.length, 1);
           assert.equal(logs[0].event, 'Approval');
-          assert.equal(logs[0].args.owner, owner);
-          assert.equal(logs[0].args.spender, spender);
-          assert(logs[0].args.value.eq(amount));
+          // kh.
+          assert.equal(logs[0].args._owner, owner);
+          assert.equal(logs[0].args._spender, spender);
+          assert(logs[0].args._value.eq(amount));
         });
 
         describe('when there was no approved amount before', function () {
@@ -177,9 +180,10 @@ contract(
 
         assert.equal(logs.length, 1);
         assert.equal(logs[0].event, 'Approval');
-        assert.equal(logs[0].args.owner, owner);
-        assert.equal(logs[0].args.spender, spender);
-        assert(logs[0].args.value.eq(amount));
+        // kh.
+        assert.equal(logs[0].args._owner, owner);
+        assert.equal(logs[0].args._spender, spender);
+        assert(logs[0].args._value.eq(amount));
       });
     });
   });
@@ -217,12 +221,13 @@ contract(
 
           it('emits a transfer event', async function () {
             const { logs } = await this.token.transferFrom(owner, to, amount, { from: spender });
-
+            
             assert.equal(logs.length, 1);
             assert.equal(logs[0].event, 'Transfer');
-            assert.equal(logs[0].args.from, owner);
-            assert.equal(logs[0].args.to, to);
-            assert(logs[0].args.value.eq(amount));
+            // kh.
+            assert.equal(logs[0].args._from, owner);
+            assert.equal(logs[0].args._to, to);
+            assert(logs[0].args._value.eq(amount));
           });
         });
 
@@ -272,7 +277,7 @@ contract(
     });
   });
 
-  // we dont have
+  // kh. we dont have
 
   // describe('decrease approval', function () {
   //   describe('when the spender is not the zero address', function () {
